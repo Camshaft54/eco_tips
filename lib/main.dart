@@ -1,4 +1,4 @@
-import 'package:carbon_tracker/daily_survey.dart';
+import 'package:carbon_tracker/daily_survey/daily_survey.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'homepage.dart';

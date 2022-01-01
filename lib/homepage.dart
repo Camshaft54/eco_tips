@@ -1,11 +1,12 @@
 import 'dart:ui';
 
 import 'package:carbon_tracker/main.dart';
+import 'package:carbon_tracker/settings/settings_page.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'daily_survey.dart';
-import 'daily_survey_form.dart';
+import 'daily_survey/daily_survey.dart';
+import 'daily_survey/daily_survey_form.dart';
 import 'main.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,7 +34,18 @@ class _HomePageState extends State<HomePage> {
         title: 'Carbon Tracker',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: Scaffold(
-          appBar: AppBar(title: const Text("Surveys")),
+          appBar: AppBar(title: const Text("Surveys"), actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                    builder: (context) =>
+                    const SettingsPage()));
+              },
+            )
+          ]),
           body: Column(children: [
             Expanded(
               child: Container(

@@ -1,9 +1,9 @@
-import 'package:carbon_tracker/daily_survey.dart';
-import 'package:carbon_tracker/daily_survey_food_types.dart';
+import 'package:carbon_tracker/daily_survey/daily_survey.dart';
+import 'package:carbon_tracker/daily_survey/daily_survey_food_types.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'homepage.dart';
+import '../homepage.dart';
 
 class DailySurveyPage extends StatelessWidget {
   const DailySurveyPage({Key? key, required this.date}) : super(key: key);
@@ -12,7 +12,7 @@ class DailySurveyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Carbon Tracker',
+      title: '${DateFormat.yMd().format(date)} Survey',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: Scaffold(
         appBar: AppBar(
