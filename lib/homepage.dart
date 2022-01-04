@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:carbon_tracker/main.dart';
 import 'package:carbon_tracker/settings/settings_page.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime currDate = getCurrentDate();
+  AxisDirection dayCardDirection = AxisDirection.left;
 
   @override
   Widget build(BuildContext context) {
@@ -27,111 +26,138 @@ class _HomePageState extends State<HomePage> {
     if (weeklyCarbonEmissions == "-1.0") {
       weeklyCarbonEmissions = "N/A";
     }
-    var hasCompletedDaily =
-        Hive.box("daily").containsKey(currDate.toIso8601String());
 
     return MaterialApp(
         title: 'Carbon Tracker',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: Scaffold(
-          appBar: AppBar(title: const Text("Surveys"), actions: [
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                    builder: (context) =>
-                    const SettingsPage()));
-              },
-            )
-          ]),
-          body: Column(children: [
-            Expanded(
-              child: Container(
-                color: Colors.black12,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      FittedBox(
-                          fit: BoxFit.fitWidth,
-                          child: Text(weeklyCarbonEmissions,
-                              style: const TextStyle(fontSize: 84))),
-                      RichText(
-                        text: TextSpan(
-                            text:
-                                "Week of ${DateFormat.yMd().format(firstDayInWeek)} ",
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                            children: const [
-                              TextSpan(
-                                  text: "total CO₂e/kg emissions",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.normal))
-                            ]),
-                      ),
-                      const SizedBox(width: 10, height: 20),
-                      _buildSurveyButton(
-                          (hasCompletedDaily)
-                              ? "Redo daily survey"
-                              : "Complete daily survey",
-                          color: (hasCompletedDaily)
-                              ? Colors.grey
-                              : (currDate != getCurrentDate())
-                                  ? Colors.red
-                                  : const Color.fromARGB(255, 34, 150, 243),
-                          onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    DailySurveyPage(date: currDate)));
+            appBar: AppBar(title: const Text("Surveys"), actions: [
+              IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsPage()));
+                },
+              )
+            ]),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(children: [
+                Text(weeklyCarbonEmissions,
+                    style: const TextStyle(fontSize: 84)),
+                RichText(
+                  text: TextSpan(
+                      text:
+                          "Week of ${DateFormat.yMd().format(firstDayInWeek)} ",
+                      style: const TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                      children: const [
+                        TextSpan(
+                            text: "total CO₂e/kg emissions",
+                            style: TextStyle(fontWeight: FontWeight.normal))
+                      ]),
+                ),
+                const SizedBox(width: 10, height: 20),
+                Expanded(
+                    child: SlideAnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        direction: dayCardDirection,
+                        currChild: DayCard(
+                            key: ValueKey(currDate), currDate: currDate))),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: (currDate == Main.firstInstallDate)
+                          ? null
+                          : () {
+                              setState(() {
+                                dayCardDirection = AxisDirection.left;
+                                currDate =
+                                    currDate.add(const Duration(days: -1));
+                              });
+                            }),
+                  ElevatedButton(
+                      child: Text(formatDate(currDate)),
+                      onPressed: () async {
+                        var newDate = (await showDatePicker(
+                            context: context,
+                            initialDate: currDate,
+                            firstDate: Main.firstInstallDate,
+                            lastDate: getCurrentDate()))!;
+                        setState(() {
+                          dayCardDirection = (newDate.isAfter(currDate))
+                              ? AxisDirection.right
+                              : AxisDirection.left;
+                          currDate = newDate;
+                        });
                       }),
-                    ]),
-              ),
-            ),
-            Container(
-              color: Colors.white,
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: (currDate == Main.firstInstallDate)
-                        ? null
-                        : () {
-                            setState(() {
-                              currDate = currDate.add(const Duration(days: -1));
-                            });
-                          }),
-                Text(formatDate(currDate)),
-                IconButton(
-                    icon: const Icon(Icons.arrow_forward),
-                    onPressed: (currDate ==
-                            getCurrentDate()) // Disable button if the current day is today
-                        ? null
-                        : () {
-                            setState(() {
-                              currDate = currDate.add(const Duration(days: 1));
-                            });
-                          }),
+                  IconButton(
+                      icon: const Icon(Icons.arrow_forward),
+                      onPressed: (currDate ==
+                              getCurrentDate()) // Disable button if the current day is today
+                          ? null
+                          : () {
+                              setState(() {
+                                dayCardDirection = AxisDirection.right;
+                                currDate =
+                                    currDate.add(const Duration(days: 1));
+                              });
+                            }),
+                ])
               ]),
-            )
-          ]),
-        ));
+            )));
   }
 }
 
-Widget _buildSurveyButton(String label,
+class DayCard extends StatelessWidget {
+  final DateTime currDate;
+  final bool hasCompletedDaily;
+
+  DayCard({Key? key, required this.currDate})
+      : hasCompletedDaily =
+            Hive.box("daily").containsKey(currDate.toIso8601String()),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Colors.black12),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        buildSurveyButton(
+            (hasCompletedDaily) ? "Redo daily survey" : "Complete daily survey",
+            color: (hasCompletedDaily)
+                ? Colors.grey
+                : (currDate != getCurrentDate())
+                    ? Colors.red
+                    : const Color.fromARGB(255, 34, 150, 243), onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DailySurveyPage(date: currDate)));
+        }),
+      ]),
+    );
+  }
+}
+
+Widget buildSurveyButton(String label,
     {Color color = const Color.fromARGB(255, 34, 150, 243),
-    VoidCallback? onPressed}) {
-  return SizedBox(
-    width: double.infinity,
-    child: ElevatedButton(
-        child: Text(label),
-        onPressed: onPressed,
-        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(color))),
-  );
+    VoidCallback? onPressed,
+    includePadding = true}) {
+  return Padding(
+      padding: EdgeInsets.symmetric(horizontal: (includePadding) ? 5.0 : 0),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+            child: Text(label),
+            onPressed: onPressed,
+            style:
+                ButtonStyle(backgroundColor: MaterialStateProperty.all(color))),
+      ));
 }
 
 double calculateWeeklyCarbonEmissions(DateTime weekStart) {
@@ -141,7 +167,7 @@ double calculateWeeklyCarbonEmissions(DateTime weekStart) {
   var incompleteDays = 0;
   for (int i = 0; i < 7; i++) {
     if (dailyBox.containsKey(currDay.toIso8601String())) {
-      total += dailyBox.get(currDay.toIso8601String()).emissions;
+      total += dailyBox.get(currDay.toIso8601String()).totalEmissions;
     } else {
       incompleteDays += 1;
     }
@@ -156,4 +182,45 @@ double calculateWeeklyCarbonEmissions(DateTime weekStart) {
 
 String formatDate(DateTime date) {
   return DateFormat.yMEd().format(date);
+}
+
+class SlideAnimatedSwitcher extends AnimatedSwitcher {
+  SlideAnimatedSwitcher(
+      {Key? key,
+      required Duration duration,
+      required currChild,
+      required AxisDirection direction,
+      double startOffset = -1.5,
+      double endOffset = 1.5})
+      : super(
+            key: key,
+            duration: duration,
+            child: currChild,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              var currChildOffset = (direction == AxisDirection.left)
+                  ? Tween<Offset>(
+                      begin: Offset(startOffset, 0.0),
+                      end: Offset.zero,
+                    )
+                  : Tween<Offset>(
+                      begin: Offset(endOffset, 0.0),
+                      end: Offset.zero,
+                    );
+
+              var prevChildOffset = (direction == AxisDirection.left)
+                  ? Tween<Offset>(
+                      begin: Offset(endOffset, 0.0),
+                      end: Offset.zero,
+                    )
+                  : Tween<Offset>(
+                      begin: Offset(startOffset, 0.0),
+                      end: Offset.zero,
+                    );
+
+              var _offsetAnimation = ((child.key == currChild.key)
+                      ? currChildOffset
+                      : prevChildOffset)
+                  .animate(animation);
+              return SlideTransition(position: _offsetAnimation, child: child);
+            });
 }

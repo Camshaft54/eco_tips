@@ -1,40 +1,44 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'daily_survey.dart';
+part of 'transport_type.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class DailySurveyAdapter extends TypeAdapter<DailySurvey> {
+class TransportTypeAdapter extends TypeAdapter<TransportType> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
-  DailySurvey read(BinaryReader reader) {
+  TransportType read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return DailySurvey(
-      (fields[0] as Map).cast<String, int>(),
+    return TransportType(
+      fields[0] as String,
+      fields[1] as String,
       fields[2] as double,
-      fields[3] as double,
-    )..totalEmissions = fields[1] as double;
+    )
+      ..commuteDistance = fields[3] as double
+      ..isComplete = fields[4] as bool;
   }
 
   @override
-  void write(BinaryWriter writer, DailySurvey obj) {
+  void write(BinaryWriter writer, TransportType obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.foodTypes)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.totalEmissions)
+      ..write(obj.displayName)
       ..writeByte(2)
-      ..write(obj.commuteDistance)
+      ..write(obj.emissionsPerMile)
       ..writeByte(3)
-      ..write(obj.emissionsFromAdditionalTravel);
+      ..write(obj.commuteDistance)
+      ..writeByte(4)
+      ..write(obj.isComplete);
   }
 
   @override
@@ -43,7 +47,7 @@ class DailySurveyAdapter extends TypeAdapter<DailySurvey> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DailySurveyAdapter &&
+      other is TransportTypeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

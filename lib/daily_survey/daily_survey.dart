@@ -7,9 +7,13 @@ class DailySurvey extends HiveObject {
   @HiveField(0)
   Map<String, int> foodTypes;
   @HiveField(1)
-  double emissions;
+  double totalEmissions = 0;
+  @HiveField(2)
+  double commuteDistance;
+  @HiveField(3)
+  double emissionsFromAdditionalTravel;
 
-  DailySurvey(this.foodTypes, this.emissions);
+  DailySurvey(this.foodTypes, this.commuteDistance, this.emissionsFromAdditionalTravel);
 
   @override
   String toString() {
