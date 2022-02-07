@@ -20,16 +20,23 @@ class _CommutePageState extends State<CommutePage> {
         theme: ThemeData(primarySwatch: Colors.blue),
         home: Scaffold(
           appBar: AppBar(
-            title: const Text('Transport Settings'),
-            automaticallyImplyLeading: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TransportPage()),
+              title: const Text('Transport Settings'),
+              automaticallyImplyLeading: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TransportPage()),
+                ),
               ),
-            ),
-          ),
+              actions: [
+                buildHelpButton(
+                    context: context,
+                    alertTitle: "Commute",
+                    description:
+                        "Enter your average commute distance each day. Do not include travel outside of going to and from school/work unless you always travel there when you commute. ")
+              ]),
           body: const Center(
               child: Padding(
                   child: CommuteForm(),
@@ -58,8 +65,8 @@ class _CommuteFormState extends State<CommuteForm> {
     if (transport.isComplete) {
       if (transport.id == TransportType.car.id) {
         // Reverse emissions calculation to retrieve original mpg
-        gasMileageController.text = (1 / (transport.emissionsPerMile / 8.887))
-            .toStringAsFixed(1);
+        gasMileageController.text =
+            (1 / (transport.emissionsPerMile / 8.887)).toStringAsFixed(1);
       }
       commuteDistanceController.text =
           transport.commuteDistance.toStringAsFixed(1);

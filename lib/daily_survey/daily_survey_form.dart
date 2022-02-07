@@ -17,17 +17,23 @@ class DailySurveyPage extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.blue),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('${DateFormat.yMd().format(date)} Survey'),
-          automaticallyImplyLeading: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () =>
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                ),
-          ),
-        ),
+            title: Text('${DateFormat.yMd().format(date)} Survey'),
+            automaticallyImplyLeading: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              ),
+            ),
+            actions: [
+              buildHelpButton(
+                  context: context,
+                  alertTitle: "Daily Survey",
+                  description:
+                      "Food Options: Select how many servings of each entry on the list you consumed that day. If an item is not listed, select the choice that best matches your item. You do not need to include items like fruits and vegetables, since they usually have lower carbon emissions.\n\n"
+                      "Transportation: Select whether or not you commuted that day. This will use data from your transportation settings. If you travelled outside of your commute using the commute option from your transportation settings, enter how many additional miles you travelled.")
+            ]),
         body: Center(
             child: Padding(
                 child: DailySurveyForm(date: date),
@@ -60,7 +66,7 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
     for (var foodType in FoodType.foodTypes) {
       list.add(CounterFormField(
           title:
-          "Servings of ${foodType.displayName} (${foodType.servingSize})",
+              "Servings of ${foodType.displayName} (${foodType.servingSize})",
           onSaved: (food) => _foods[foodType.displayName] = food!,
           validator: (value) {
             return (value! < 0) ? "Must be a positive value" : null;
@@ -79,30 +85,28 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
           const Text(
               "Did you commute today? (uses transportation settings data)"),
           ToggleButtons(
-              children: const [
-                Text("Yes"),
-                Text("No")
-              ],
+              children: const [Text("Yes"), Text("No")],
               isSelected: commuteButtonSelections,
               onPressed: (index) {
                 setState(() {
                   commuteButtonSelections[index] = true;
                   commuteButtonSelections[(index + 1) % 2] = false;
                 });
-              }
-          ),
+              }),
           TextFormField(
               controller: additionalTravelController,
               decoration: const InputDecoration(
                   labelText: "Additional miles travelled (optional)"),
               validator: (text) {
-                if (text != null && text.isNotEmpty &&
+                if (text != null &&
+                    text.isNotEmpty &&
                     double.tryParse(text) == null) {
                   return "Must be a number or left blank";
                 }
-              }
-          ),
-          buildSurveyButton("Submit", includePadding: false,
+              }),
+          buildSurveyButton(
+            "Submit",
+            includePadding: false,
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
@@ -110,13 +114,13 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
                 TransportType transportType = transportBox.getAt(0);
                 double commuteDistance = (commuteButtonSelections[0])
                     ? transportType.emissionsPerMile *
-                    transportType.commuteDistance
+                        transportType.commuteDistance
                     : 0;
-                double? additionalTravelDistance = double.tryParse(
-                    additionalTravelController.text);
+                double? additionalTravelDistance =
+                    double.tryParse(additionalTravelController.text);
                 double additionalTravelEmissions = (additionalTravelDistance !=
-                    null) ?
-                additionalTravelDistance * transportType.emissionsPerMile
+                        null)
+                    ? additionalTravelDistance * transportType.emissionsPerMile
                     : 0;
 
                 var dailySurvey = DailySurvey(
@@ -141,59 +145,58 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
 }
 
 class CounterFormField extends FormField<int> {
-  CounterFormField({Key? key,
-    required String title,
-    required FormFieldSetter<int> onSaved,
-    required FormFieldValidator<int> validator,
-    int initialValue = 0})
+  CounterFormField(
+      {Key? key,
+      required String title,
+      required FormFieldSetter<int> onSaved,
+      required FormFieldValidator<int> validator,
+      int initialValue = 0})
       : super(
-      key: key,
-      onSaved: onSaved,
-      validator: validator,
-      initialValue: initialValue,
-      builder: (FormFieldState<int> state) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(title),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                IconButton(
-                  constraints: const BoxConstraints(),
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    state.didChange(state.value! - 1);
-                  },
-                ),
-                Text(state.value.toString()),
-                IconButton(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-                  constraints: const BoxConstraints(),
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    state.didChange(state.value! + 1);
-                  },
-                ),
-              ],
-            ),
-            state.hasError
-                ? Text(state.errorText!,
-                style: const TextStyle(color: Colors.red))
-                : Container()
-          ],
-        );
-      });
+            key: key,
+            onSaved: onSaved,
+            validator: validator,
+            initialValue: initialValue,
+            builder: (FormFieldState<int> state) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(title),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      IconButton(
+                        constraints: const BoxConstraints(),
+                        padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+                        icon: const Icon(Icons.remove),
+                        onPressed: () {
+                          state.didChange(state.value! - 1);
+                        },
+                      ),
+                      Text(state.value.toString()),
+                      IconButton(
+                        padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+                        constraints: const BoxConstraints(),
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          state.didChange(state.value! + 1);
+                        },
+                      ),
+                    ],
+                  ),
+                  state.hasError
+                      ? Text(state.errorText!,
+                          style: const TextStyle(color: Colors.red))
+                      : Container()
+                ],
+              );
+            });
 }
 
 double calculateCarbonEmissions(DailySurvey survey, double emissionsPerMile) {
   var foods = survey.foodTypes;
   double total = 0;
   for (var food in foods.entries) {
-    total += FoodType
-        .getFoodType(food.key)
-        .carbonPerServing * food.value;
+    total += FoodType.getFoodType(food.key).carbonPerServing * food.value;
   }
   total += survey.commuteDistance * emissionsPerMile;
   total += survey.emissionsFromAdditionalTravel;

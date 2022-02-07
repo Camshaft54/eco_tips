@@ -9,8 +9,8 @@ Future<void> main() async {
   Hive.registerAdapter(DailySurveyAdapter());
   Hive.registerAdapter(TransportTypeAdapter());
   await Hive.openBox('daily');
-  var transport = await Hive.openBox('transport');
-  print(transport.toMap());
+  // Hive.deleteBoxFromDisk("transport");
+  await Hive.openBox('transport');
 
   runApp(
     const MaterialApp(

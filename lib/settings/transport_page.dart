@@ -21,16 +21,23 @@ class _TransportPageState extends State<TransportPage> {
         theme: ThemeData(primarySwatch: Colors.blue),
         home: Scaffold(
           appBar: AppBar(
-            title: const Text('Transport Settings'),
-            automaticallyImplyLeading: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              title: const Text('Transport Settings'),
+              automaticallyImplyLeading: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                ),
               ),
-            ),
-          ),
+              actions: [
+                buildHelpButton(
+                  context: context,
+                  alertTitle: "Commute Method",
+                  description:
+                      "Choose the option that best reflects your commute method. Only one mode of transportation can be selected, so if you commute multiple ways, select the commute method that you use most or the one with greater emissions.",
+                ),
+              ]),
           body: const Center(
               child: Padding(
                   child: TransportForm(),
@@ -77,7 +84,7 @@ class _TransportFormState extends State<TransportForm> {
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
-        child: Column(children: [
+        child: ListView(children: [
           const Text(
               "What kind of transportation do you use to commute to school/work?",
               style: TextStyle(fontSize: 16)),

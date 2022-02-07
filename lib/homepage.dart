@@ -45,8 +45,21 @@ class _HomePageState extends State<HomePage> {
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(children: [
-                Text(weeklyCarbonEmissions,
-                    style: const TextStyle(fontSize: 84)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(weeklyCarbonEmissions,
+                        style: const TextStyle(fontSize: 84)),
+                    buildHelpButton(
+                        context: context,
+                        alertTitle: "Carbon Emissions",
+                        description:
+                            "Weekly carbon emissions reflects your average carbon emissions per day for a certain week. The more days you submit surveys for, the more accurate the average will be.",
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 0, vertical: 10))
+                  ],
+                ),
                 RichText(
                   text: TextSpan(
                       text:
@@ -55,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.black, fontWeight: FontWeight.bold),
                       children: const [
                         TextSpan(
-                            text: "total CO₂e/kg emissions",
+                            text: "daily average CO₂e/kg",
                             style: TextStyle(fontWeight: FontWeight.normal))
                       ]),
                 ),
@@ -81,17 +94,19 @@ class _HomePageState extends State<HomePage> {
                   ElevatedButton(
                       child: Text(formatDate(currDate)),
                       onPressed: () async {
-                        var newDate = (await showDatePicker(
+                        var newDate = await showDatePicker(
                             context: context,
                             initialDate: currDate,
                             firstDate: Main.firstInstallDate,
-                            lastDate: getCurrentDate()))!;
-                        setState(() {
-                          dayCardDirection = (newDate.isAfter(currDate))
-                              ? AxisDirection.right
-                              : AxisDirection.left;
-                          currDate = newDate;
-                        });
+                            lastDate: getCurrentDate());
+                        if (newDate != null) {
+                          setState(() {
+                            dayCardDirection = (newDate.isAfter(currDate))
+                                ? AxisDirection.right
+                                : AxisDirection.left;
+                            currDate = newDate;
+                          });
+                        }
                       }),
                   IconButton(
                       icon: const Icon(Icons.arrow_forward),
@@ -134,10 +149,26 @@ class DayCard extends StatelessWidget {
                 : (currDate != getCurrentDate())
                     ? Colors.red
                     : const Color.fromARGB(255, 34, 150, 243), onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DailySurveyPage(date: currDate)));
+          var transport = Hive.box('transport');
+          if (transport.get(0) == null || !transport.get(0)!.isComplete) {
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                        title: const Text("Missing Transportation Settings"),
+                        content: const Text(
+                            "Finish transportation survey in settings before completing surveys"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'OK'),
+                            child: const Text('OK'),
+                          )
+                        ]));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DailySurveyPage(date: currDate)));
+          }
         }),
       ]),
     );
@@ -164,19 +195,18 @@ double calculateWeeklyCarbonEmissions(DateTime weekStart) {
   var dailyBox = Hive.box("daily");
   var currDay = weekStart;
   var total = 0.0;
-  var incompleteDays = 0;
+  var completeDays = 0;
   for (int i = 0; i < 7; i++) {
     if (dailyBox.containsKey(currDay.toIso8601String())) {
       total += dailyBox.get(currDay.toIso8601String()).totalEmissions;
-    } else {
-      incompleteDays += 1;
+      completeDays++;
     }
     currDay = currDay.add(const Duration(days: 1));
   }
-  if (incompleteDays > 2) {
+  if (completeDays == 0) {
     return -1;
   } else {
-    return total;
+    return total / completeDays;
   }
 }
 
@@ -223,4 +253,28 @@ class SlideAnimatedSwitcher extends AnimatedSwitcher {
                   .animate(animation);
               return SlideTransition(position: _offsetAnimation, child: child);
             });
+}
+
+IconButton buildHelpButton(
+    {required BuildContext context,
+    required String alertTitle,
+    required String description,
+    EdgeInsets padding = const EdgeInsets.all(8.0)}) {
+  return IconButton(
+      icon: const Icon(Icons.help),
+      padding: padding,
+      constraints: const BoxConstraints(),
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                    title: Text(alertTitle),
+                    content: Text(description),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Close'),
+                        child: const Text('Close'),
+                      )
+                    ]));
+      });
 }
