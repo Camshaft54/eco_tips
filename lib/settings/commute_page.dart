@@ -1,6 +1,4 @@
 import 'package:carbon_tracker/homepage.dart';
-import 'package:carbon_tracker/settings/settings_page.dart';
-import 'package:carbon_tracker/settings/transport_page.dart';
 import 'package:carbon_tracker/settings/transport_type.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -15,34 +13,26 @@ class CommutePage extends StatefulWidget {
 class _CommutePageState extends State<CommutePage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: "Carbon Tracker Settings",
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: Scaffold(
-          appBar: AppBar(
-              title: const Text('Transport Settings'),
-              automaticallyImplyLeading: true,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const TransportPage()),
-                ),
-              ),
-              actions: [
-                buildHelpButton(
-                    context: context,
-                    alertTitle: "Commute",
-                    description:
-                        "Enter your average commute distance each day. Do not include travel outside of going to and from school/work unless you always travel there when you commute. ")
-              ]),
-          body: const Center(
-              child: Padding(
-                  child: CommuteForm(),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0))),
-        ));
+    return Scaffold(
+      appBar: AppBar(
+          title: const Text('Transport Settings'),
+          automaticallyImplyLeading: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: [
+            buildHelpButton(
+                context: context,
+                alertTitle: "Commute",
+                description:
+                    "Enter your average commute distance each day. Do not include travel outside of going to and from school/work unless you always travel there when you commute. ")
+          ]),
+      body: const Center(
+          child: Padding(
+              child: CommuteForm(),
+              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0))),
+    );
   }
 }
 
@@ -113,10 +103,7 @@ class _CommuteFormState extends State<CommuteForm> {
                 // Make sure this occurs before routing user back to settings page
                 await transportBox.clear();
                 await transportBox.add(transport);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
-                );
+                Navigator.popUntil(context, ModalRoute.withName("/"));
               }
             },
           ),

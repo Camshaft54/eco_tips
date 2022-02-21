@@ -13,8 +13,11 @@ Future<void> main() async {
   await Hive.openBox('transport');
 
   runApp(
-    const MaterialApp(
-      home: HomePage(),
+    MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+      }
     ),
   );
 }

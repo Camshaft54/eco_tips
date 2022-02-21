@@ -28,35 +28,20 @@ class _SettingsPageState extends State<SettingsPage> {
       transportSettingsColor = Colors.red;
     }
 
-    return MaterialApp(
-        title: "Carbon Tracker Settings",
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: Scaffold(
-            appBar: AppBar(
-              title: const Text('Settings'),
-              automaticallyImplyLeading: true,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                ),
-              ),
-            ),
-            body: Center(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16.0, horizontal: 5.0),
-                  child: Column(children: [
-                    buildSurveyButton(transportSettingsText,
-                        color: transportSettingsColor,
-                        includePadding: false,
-                        onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(settings: const RouteSettings(name: "toTransport"),
-                                  builder: (context) => const TransportPage()),
-                            ))
-                  ])),
-            )));
+    return Center(
+      child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 5.0),
+          child: Column(children: [
+            buildSurveyButton(transportSettingsText,
+                color: transportSettingsColor,
+                includePadding: false, onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const TransportPage()),
+              );
+              setState(() {});
+            })
+          ])),
+    );
   }
 }

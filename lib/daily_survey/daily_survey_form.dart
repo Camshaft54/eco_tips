@@ -12,34 +12,27 @@ class DailySurveyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '${DateFormat.yMd().format(date)} Survey',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: Scaffold(
-        appBar: AppBar(
-            title: Text('${DateFormat.yMd().format(date)} Survey'),
-            automaticallyImplyLeading: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              ),
-            ),
-            actions: [
-              buildHelpButton(
-                  context: context,
-                  alertTitle: "Daily Survey",
-                  description:
-                      "Food Options: Select how many servings of each entry on the list you consumed that day. If an item is not listed, select the choice that best matches your item. You do not need to include items like fruits and vegetables, since they usually have lower carbon emissions.\n\n"
-                      "Transportation: Select whether or not you commuted that day. This will use data from your transportation settings. If you travelled outside of your commute using the commute option from your transportation settings, enter how many additional miles you travelled.")
-            ]),
-        body: Center(
-            child: Padding(
-                child: DailySurveyForm(date: date),
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 10.0))),
-      ),
+    return Scaffold(
+      appBar: AppBar(
+          title: Text('${DateFormat.yMd().format(date)} Survey'),
+          automaticallyImplyLeading: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context)
+          ),
+          actions: [
+            buildHelpButton(
+                context: context,
+                alertTitle: "Daily Survey",
+                description:
+                    "Food Options: Select how many servings of each entry on the list you consumed that day. If an item is not listed, select the choice that best matches your item. You do not need to include items like fruits and vegetables, since they usually have lower carbon emissions.\n\n"
+                    "Transportation: Select whether or not you commuted that day. This will use data from your transportation settings. If you travelled outside of your commute using the commute option from your transportation settings, enter how many additional miles you travelled.")
+          ]),
+      body: Center(
+          child: Padding(
+              child: DailySurveyForm(date: date),
+              padding: const EdgeInsets.symmetric(
+                  vertical: 16.0, horizontal: 10.0))),
     );
   }
 }
@@ -49,7 +42,7 @@ class DailySurveyForm extends StatefulWidget {
   final DateTime date;
 
   @override
-  State<StatefulWidget> createState() => _DailySurveyFormState(date);
+  State<StatefulWidget> createState() => _DailySurveyFormState();
 }
 
 class _DailySurveyFormState extends State<DailySurveyForm> {
@@ -57,9 +50,6 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
   final _foods = <String, int>{};
   final commuteButtonSelections = [false, true];
   final additionalTravelController = TextEditingController();
-  final DateTime date;
-
-  _DailySurveyFormState(this.date);
 
   List<Widget> createFoodTypeWidgets() {
     List<Widget> list = [];
@@ -129,12 +119,9 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
                     dailySurvey, transportType.emissionsPerMile);
 
                 var daily = Hive.box('daily');
-                daily.put(date.toIso8601String(), dailySurvey);
+                daily.put(widget.date.toIso8601String(), dailySurvey);
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
+                Navigator.pop(context);
               }
             },
           )
