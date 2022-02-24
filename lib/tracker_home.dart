@@ -63,12 +63,8 @@ class _TrackerHomeState extends State<TrackerHome> {
             child: SlideAnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
                 direction: dayCardDirection,
-                currChild: Container(
+                currChild: Card(
                   key: ValueKey(currDate),
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Colors.black12
-                  ),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
