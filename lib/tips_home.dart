@@ -1,4 +1,4 @@
-import 'package:carbon_tracker/tips/WeeklyTipSelector.dart';
+import 'package:carbon_tracker/tips/weekly_tip_selector.dart';
 import 'package:flutter/material.dart';
 
 class TipsHome extends StatefulWidget {

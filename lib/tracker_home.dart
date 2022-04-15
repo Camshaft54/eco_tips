@@ -61,7 +61,7 @@ class _TrackerHomeState extends State<TrackerHome> {
         const SizedBox(width: 10, height: 20),
         Expanded(
             child: SlideAnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 200),
                 direction: dayCardDirection,
                 currChild: Card(
                   key: ValueKey(currDate),

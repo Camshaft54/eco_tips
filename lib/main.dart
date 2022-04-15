@@ -1,5 +1,6 @@
 import 'package:carbon_tracker/daily_survey/daily_survey.dart';
 import 'package:carbon_tracker/settings/transport_type.dart';
+import 'package:carbon_tracker/tips/tip_loader.dart';
 import 'package:carbon_tracker/tips/tip_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -14,6 +15,11 @@ Future<void> main() async {
   // Hive.deleteBoxFromDisk("transport");
   await Hive.openBox('transport');
   await Hive.openBox('tips');
+  // Load tips from file
+  TipLoader();
+  TipLoader.allTipsFuture.whenComplete(() {
+    print('done!');
+  });
 
   runApp(
     MaterialApp(
