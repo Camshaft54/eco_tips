@@ -51,6 +51,7 @@ class _WeeklyTipSelectorState extends State<WeeklyTipSelector> {
             builder: (context, allTipsSnapshot) {
               if (allTipsSnapshot.hasData) {
                 var allTips = allTipsSnapshot.data as Map<String, Tip>;
+                print(allTips);
                 return Column(children: [
                   Padding(
                       padding:

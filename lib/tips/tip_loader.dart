@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/services.dart';
 
@@ -32,4 +33,9 @@ class Tip {
   int difficulty;
 
   Tip(this.id, this.name, this.description, this.difficulty);
+
+  @override
+  String toString() {
+    return "$id ($name): ${description.substring(0, min(10, description.length))}${(description.isNotEmpty) ? "..." : ""}, $difficulty-star";
+  }
 }

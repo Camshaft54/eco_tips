@@ -8,61 +8,73 @@
   {
     "id": 1,
     "name": "Drive eco-friendly",
-    "difficulty": 1
+    "difficulty": 1,
+    "description": ""
   },
   {
     "id": 2,
     "name": "Use reusable water bottle instead of a single-use one",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 3,
     "name": "Reuse bags from grocery store",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 4,
     "name": "Turn off all lights not in use",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 5,
     "name": "Don't use the dryer",
-    "difficulty": 3
+    "difficulty": 3,
+    "description": ""
   },
   {
     "id": 6,
     "name": "Replace old light bulbs with LEDs",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 7,
     "name": "Eat red meat one time fewer per week",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 8,
     "name": "Use cruise control while driving",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 8,
     "name": "Buy secondhand clothes instead of new ones",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 9,
     "name": "Use natural dry shampoo",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 9,
     "name": "Dispose of old batteries at battery recycling facility",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   },
   {
     "id": 9,
     "name": "Switch to rechargeable batteries—and recharge them!",
-    "difficulty": 2
+    "difficulty": 2,
+    "description": ""
   }
 ]
