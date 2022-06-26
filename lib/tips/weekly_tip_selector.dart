@@ -1,4 +1,3 @@
-import 'package:carbon_tracker/daily_survey/daily_survey.dart';
 import 'package:carbon_tracker/tips/tip_loader.dart';
 import 'package:carbon_tracker/tips/tip_selection.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +12,15 @@ class WeeklyTipSelector extends StatefulWidget {
 
 class _WeeklyTipSelectorState extends State<WeeklyTipSelector> {
   List<Tip> foundTips = [];
-  List<int> selectedTips = [];
+  List<String> selectedTips = [];
   var difficultyFilter = 0; // 0 = no filter, 1 = 1 star, 2 = 2 star, 3 = 3 star
   var currentQuery = "";
 
   @override
   void initState() {
     super.initState();
+    TipLoader.allTipsFuture
+        .then((allTips) => {foundTips = allTips.values.toList()});
   }
 
   void filterTips(String query, Map<String, Tip> allTips) {
@@ -51,7 +52,6 @@ class _WeeklyTipSelectorState extends State<WeeklyTipSelector> {
             builder: (context, allTipsSnapshot) {
               if (allTipsSnapshot.hasData) {
                 var allTips = allTipsSnapshot.data as Map<String, Tip>;
-                print(allTips);
                 return Column(children: [
                   Padding(
                       padding:
@@ -78,33 +78,33 @@ class _WeeklyTipSelectorState extends State<WeeklyTipSelector> {
                       ])),
                   Expanded(
                       child: ListView.builder(
-                    itemCount: foundTips.length,
-                    itemBuilder: (context, index) => Card(
-                        child: ListTile(
-                            leading: Checkbox(
-                                onChanged: (selectedTips.length == 3 &&
-                                        !selectedTips.contains(index))
-                                    ? null
-                                    : (checked) {
-                                        setState(() {
-                                          if (checked == true) {
-                                            selectedTips.add(index);
-                                          } else {
-                                            selectedTips.remove(index);
-                                          }
-                                        });
-                                      },
-                                value: selectedTips.contains(index)),
-                            title: Text(foundTips[index].name))),
-                  )),
+                          itemCount: foundTips.length,
+                          itemBuilder: (context, index) {
+                            var id = foundTips[index].id;
+                            return Card(
+                                child: ListTile(
+                                    leading: Checkbox(
+                                        onChanged: (selectedTips.length == 3 &&
+                                                !selectedTips.contains(id))
+                                            ? null
+                                            : (checked) {
+                                                setState(() {
+                                                  if (checked == true) {
+                                                    selectedTips.add(id);
+                                                  } else {
+                                                    selectedTips.remove(id);
+                                                  }
+                                                });
+                                              },
+                                        value: selectedTips.contains(id)),
+                                    title: Text(foundTips[index].name)));
+                          })),
                   ElevatedButton(
                       child: const Text("Confirm"),
                       onPressed: (selectedTips.length == 3)
                           ? () {
-                              Hive.box("tips").put(
-                                  getCurrentWeekStartDate(),
-                                  TipSelection(
-                                      [])); // TODO: Create tips.json and put ids for tips here
+                              Hive.box("tips").put(TipSelection.getCurrentKey(),
+                                  TipSelection(selectedTips));
                               Navigator.pop(context);
                             }
                           : null)

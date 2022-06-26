@@ -12,14 +12,10 @@ Future<void> main() async {
   Hive.registerAdapter(TransportTypeAdapter());
   Hive.registerAdapter(TipSelectionAdapter());
   await Hive.openBox('daily');
-  // Hive.deleteBoxFromDisk("transport");
   await Hive.openBox('transport');
   await Hive.openBox('tips');
   // Load tips from file
   TipLoader();
-  TipLoader.allTipsFuture.whenComplete(() {
-    print('done!');
-  });
 
   runApp(
     MaterialApp(
