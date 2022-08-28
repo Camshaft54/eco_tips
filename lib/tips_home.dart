@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
+import 'tips/tip_selection.dart';
 import 'homepage.dart';
 
 class TipsHome extends StatefulWidget {
@@ -18,31 +19,38 @@ class TipsHome extends StatefulWidget {
 class _TipsHomeState extends State<TipsHome> {
   @override
   Widget build(BuildContext context) {
-    var areTipsSelected =
-        Hive.box("tips").containsKey(TipSelection.getCurrentKey());
+    Box<TipSelection> tipsBox = Hive.box<TipSelection>("tips");
+    var areTipsSelected = tipsBox.getWeekKey() != null;
+
+    var monthKeys = tipsBox.getKeysForMonth(DateTime.now());
+    var pointsTotal = (monthKeys.isNotEmpty)
+        ? monthKeys
+            .map((key) => tipsBox.get(key)!.totalPoints)
+            .reduce((a, b) => a + b)
+        : 0;
 
     return Column(children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("N/A", style: const TextStyle(fontSize: 84)),
+          Text(pointsTotal.toString(), style: const TextStyle(fontSize: 84)),
           buildHelpButton(
               context: context,
               alertTitle: "Tips",
               description:
-                  "Tips will provide various suggestions for how you can reduce your carbon footprint in simple ways.",
+                  "Tips will provide various suggestions for how you can reduce your carbon footprint. The month's total points reflects the points you have earned from completing tips this month so far.",
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10))
         ],
       ),
       RichText(
         text: TextSpan(
-            text: "${DateFormat("MMMM").format(DateTime.now())} point total",
+            text: "${DateFormat("MMMM").format(DateTime.now())} ",
             style: const TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold),
             children: const [
               TextSpan(
-                  text: "daily average CO₂e/kg",
+                  text: "points (to date)",
                   style: TextStyle(fontWeight: FontWeight.normal))
             ]),
       ),
@@ -54,8 +62,8 @@ class _TipsHomeState extends State<TipsHome> {
             toEdit: !areTipsSelected),
         TipCheckCard(
             completed: areTipsSelected &&
-                Hive.box("tips")
-                    .get(TipSelection.getCurrentKey())
+                !tipsBox
+                    .get(tipsBox.getWeekKey())!
                     .dailyCheckCompleted[DateTime.now().weekday - 1],
             setStateCallback: setState,
             context: context)
@@ -119,7 +127,7 @@ class TipCheckCard extends Card {
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   TextButton(
                       child: const Text("Start"),
-                      onPressed: (completed)
+                      onPressed: (!completed)
                           ? null
                           : () async {
                               await Navigator.push(
@@ -136,12 +144,13 @@ class TipCheckCard extends Card {
 
 viewTipsDialog(BuildContext context) {
   TipLoader.allTipsFuture.then((allTips) {
-    var tipSelection = Hive.box("tips").get(TipSelection.getCurrentKey())!.tips;
+    Box<TipSelection> tipsBox = Hive.box<TipSelection>("tips");
+    var tipSelection = tipsBox.get(tipsBox.getWeekKey())!;
     showDialog(
         context: context,
         builder: (context) =>
             SimpleDialog(title: const Text("Your Tip Selection"), children: [
-              for (String tipId in tipSelection)
+              for (String tipId in tipSelection.tips)
                 SimpleDialogOption(
                     onPressed: () {}, child: Text(allTips[tipId]!.name))
             ]));

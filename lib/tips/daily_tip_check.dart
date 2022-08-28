@@ -13,16 +13,21 @@ class DailyTipCheck extends StatefulWidget {
 
 class _DailyTipCheckState extends State<DailyTipCheck> {
   final List<List<bool>> tipCompletionSelections = [for (int i = 0; i < 3; i++) [false, true]];
-  final TipSelection tipSelection =
-      Hive.box("tips").get(TipSelection.getCurrentKey());
+  final Box<TipSelection> tipsBox = Hive.box<TipSelection>("tips");
 
   @override
   Widget build(BuildContext context) {
+    var currKey = tipsBox.getWeekKey();
+    if (currKey == null) {
+      throw StateError("DailyTipCheck not possible without current TipSelection in box!");
+    }
+    var tipSelection = tipsBox.get(currKey)!;
+
     return Scaffold(
         appBar: AppBar(title: const Text("Daily Tip Check")),
         body: Column(children: [
           const Text(
-              "Have you worked on all the tips you pledged? (Be honest!)\nIf the tip can only be completed once, eg. Recycling old batteries, then select yes for the day you completed the tip and yes for every day after."),
+              "Have you worked on all the tips you pledged? (Be honest!)\nIf the tip can only be completed once, eg. Recycling old batteries, then select yes for the day you completed the tip and yes for every day after.", style: TextStyle(fontSize: 16)),
           FutureBuilder(
               future: TipLoader.allTipsFuture,
               builder: (context, allTipsSnapshot) {
@@ -40,7 +45,10 @@ class _DailyTipCheckState extends State<DailyTipCheck> {
           buildSurveyButton("Submit", onPressed: () {
             TipLoader.allTipsFuture.then((allTips) {
               int dayOfWeek = DateTime.now().weekday - 1;
-              tipSelection.points[dayOfWeek] = [for (int i = 0; i < 3; i++) (tipCompletionSelections[i][0] && allTips[i] != null) ? allTips[i]!.difficulty : 0];
+              // For each of the three tips in today's sublist, set the tip's value to its difficulty if completed, otherwise 0
+              tipSelection.points[dayOfWeek] = [for (int i = 0; i < 3; i++) (tipCompletionSelections[i][0] && allTips[tipSelection.tips[i]] != null) ? allTips[tipSelection.tips[i]]!.difficulty : 0];
+              // Add all of today's points to the total points
+              tipSelection.totalPoints += tipSelection.points[dayOfWeek].reduce((a, b) => a + b);
               tipSelection.dailyCheckCompleted[dayOfWeek] = true;
               tipSelection.save();
               Navigator.pop(context);

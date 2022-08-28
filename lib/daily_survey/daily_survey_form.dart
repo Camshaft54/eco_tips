@@ -100,8 +100,8 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                var transportBox = Hive.box("transport");
-                TransportType transportType = transportBox.getAt(0);
+                var transportBox = Hive.box<TransportType>("transport");
+                TransportType transportType = transportBox.getAt(0)!;
                 double commuteDistance = (commuteButtonSelections[0])
                     ? transportType.emissionsPerMile *
                         transportType.commuteDistance
@@ -118,7 +118,7 @@ class _DailySurveyFormState extends State<DailySurveyForm> {
                 dailySurvey.totalEmissions = calculateCarbonEmissions(
                     dailySurvey, transportType.emissionsPerMile);
 
-                var daily = Hive.box('daily');
+                var daily = Hive.box<DailySurvey>('daily');
                 daily.put(widget.date.toIso8601String(), dailySurvey);
 
                 Navigator.pop(context);

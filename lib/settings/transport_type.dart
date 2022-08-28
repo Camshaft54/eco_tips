@@ -22,6 +22,12 @@ class TransportType {
     return "$id: $displayName, $emissionsPerMile CO2 kg/mi, $commuteDistance mi, isComplete: $isComplete";
   }
 
+
+  @override
+  bool operator ==(Object other) {
+    return other.runtimeType == TransportType && id == (other as TransportType).id;
+  }
+
   static final TransportType car = TransportType("car", "Car", 0.44);
   static final TransportType bus = TransportType("bus", "Bus", 0.29);
   static final TransportType heavyRail =

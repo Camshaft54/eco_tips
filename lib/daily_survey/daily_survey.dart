@@ -31,16 +31,16 @@ DateTime getCurrentDate() {
       microseconds: now.microsecond));
 }
 
-// getCurrentWeekStartDate
-// Start date of week is Monday
-DateTime getCurrentWeekStartDate() {
-  var now = DateTime.now();
-  return now.subtract(Duration(
-    days: now.weekday - 1,
-    hours: now.hour,
-    minutes: now.minute,
-    seconds: now.second,
-    milliseconds: now.millisecond,
-    microseconds: now.microsecond
+// get week start date of current date by default or a specific date
+// ignore: avoid_init_to_null
+DateTime getWeekStartDate({DateTime? specificDate = null}) {
+  DateTime date = specificDate ?? DateTime.now();
+  return date.subtract(Duration(
+    days: date.weekday - 1,
+    hours: date.hour,
+    minutes: date.minute,
+    seconds: date.second,
+    milliseconds: date.millisecond,
+    microseconds: date.microsecond
   ));
 }

@@ -11,9 +11,10 @@ Future<void> main() async {
   Hive.registerAdapter(DailySurveyAdapter());
   Hive.registerAdapter(TransportTypeAdapter());
   Hive.registerAdapter(TipSelectionAdapter());
-  await Hive.openBox('daily');
-  await Hive.openBox('transport');
-  await Hive.openBox('tips');
+  await Hive.openBox<DailySurvey>('daily');
+  await Hive.openBox<TransportType>('transport');
+  await Hive.openBox<TipSelection>('tips');
+
   // Load tips from file
   TipLoader();
 

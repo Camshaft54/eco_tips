@@ -14,7 +14,6 @@ class TipSelection extends HiveObject {
   @HiveField(2)
   List<bool> dailyCheckCompleted = List.filled(7, false);
 
-  // TODO: Implement and work out how to get the monthly total for points to display in the tips home
   @HiveField(3)
   int totalPoints = 0;
 
@@ -25,6 +24,32 @@ class TipSelection extends HiveObject {
     return "Tips: ${tips.join(", ")} - $points pts";
   }
 
-  static String getCurrentKey() =>
-      getCurrentWeekStartDate().millisecondsSinceEpoch.toString();
+}
+
+extension TipBoxFuncs on Box<TipSelection> {
+  // ignore: avoid_init_to_null
+  String? getWeekKey({DateTime? specificDate = null}) {
+    var key = getWeekStartDate(specificDate: specificDate)
+        .millisecondsSinceEpoch
+        .toString();
+    return containsKey(key) ? key : null;
+  }
+
+  String generateWeekKey() =>
+      getWeekStartDate().millisecondsSinceEpoch.toString();
+
+  List<String> getKeysForMonth(DateTime lastDate) {
+    const maxWeeks = 5;
+    DateTime currDate = getWeekStartDate(specificDate: lastDate);
+    List<String> keys = [];
+    // Loop for up to five weeks (max number of weeks in one month) until current month has changed
+    // During each iteration, add a new key for the current week, then subtract 7 days from date
+    for (int i = 0; i < maxWeeks; i++) {
+      if (currDate.month != lastDate.month) break;
+      var currWeekKey = getWeekKey(specificDate: currDate);
+      if (currWeekKey != null) keys.add(currWeekKey);
+      currDate = currDate.subtract(const Duration(days: 7));
+    }
+    return keys;
+  }
 }

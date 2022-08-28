@@ -47,11 +47,19 @@ class TransportForm extends StatefulWidget {
 
 class _TransportFormState extends State<TransportForm> {
   final _formKey = GlobalKey<FormState>();
-  var transportBox = Hive.box('transport');
-  TransportType currTransport = TransportType.none;
+  var transportBox = Hive.box<TransportType>('transport');
+  late TransportType currTransport;
 
-  _TransportFormState() {
-    if (transportBox.isNotEmpty) currTransport = transportBox.getAt(0);
+  @override
+  void initState() {
+    setState(() {
+      if (transportBox.isNotEmpty) {
+        currTransport = transportBox.getAt(0)!;
+      } else {
+        currTransport = TransportType.none;
+      }
+    });
+    super.initState();
   }
 
   List<Widget> buildTransportTypeRadios() {
@@ -92,7 +100,7 @@ class _TransportFormState extends State<TransportForm> {
               );
             }
             if (transportBox.containsKey(0)) {
-              if (transportBox.getAt(0).id != currTransport.id) {
+              if (transportBox.getAt(0)!.id != currTransport.id) {
                 transportBox.putAt(0, currTransport);
               }
             } else {

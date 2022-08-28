@@ -103,7 +103,8 @@ class _WeeklyTipSelectorState extends State<WeeklyTipSelector> {
                       child: const Text("Confirm"),
                       onPressed: (selectedTips.length == 3)
                           ? () {
-                              Hive.box("tips").put(TipSelection.getCurrentKey(),
+                              Box<TipSelection> tipsBox = Hive.box<TipSelection>("tips");
+                              tipsBox.put(tipsBox.generateWeekKey(),
                                   TipSelection(selectedTips));
                               Navigator.pop(context);
                             }

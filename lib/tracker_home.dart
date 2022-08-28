@@ -1,3 +1,4 @@
+import 'package:carbon_tracker/settings/transport_type.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -28,7 +29,7 @@ class _TrackerHomeState extends State<TrackerHome> {
       weeklyCarbonEmissions = "N/A";
     }
     hasCompletedDaily =
-        Hive.box("daily").containsKey(currDate.toIso8601String());
+        Hive.box<DailySurvey>("daily").containsKey(currDate.toIso8601String());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -78,7 +79,7 @@ class _TrackerHomeState extends State<TrackerHome> {
                                     ? Colors.red
                                     : const Color.fromARGB(255, 34, 150, 243),
                             onPressed: () async {
-                          var transport = Hive.box('transport');
+                          var transport = Hive.box<TransportType>('transport');
                           if (transport.get(0) == null ||
                               !transport.get(0)!.isComplete) {
                             showDialog(
@@ -152,13 +153,13 @@ class _TrackerHomeState extends State<TrackerHome> {
 }
 
 double calculateWeeklyCarbonEmissions(DateTime weekStart) {
-  var dailyBox = Hive.box("daily");
+  var dailyBox = Hive.box<DailySurvey>("daily");
   var currDay = weekStart;
   var total = 0.0;
   var completeDays = 0;
   for (int i = 0; i < 7; i++) {
     if (dailyBox.containsKey(currDay.toIso8601String())) {
-      total += dailyBox.get(currDay.toIso8601String()).totalEmissions;
+      total += dailyBox.get(currDay.toIso8601String())!.totalEmissions;
       completeDays++;
     }
     currDay = currDay.add(const Duration(days: 1));

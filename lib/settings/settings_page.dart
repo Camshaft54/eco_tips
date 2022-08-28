@@ -1,4 +1,5 @@
 import 'package:carbon_tracker/settings/transport_page.dart';
+import 'package:carbon_tracker/settings/transport_type.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -14,9 +15,9 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    var transportBox = Hive.box('transport');
+    var transportBox = Hive.box<TransportType>('transport');
     var hasCompletedTransportSettings =
-        transportBox.length == 1 && transportBox.getAt(0).isComplete;
+        transportBox.length == 1 && transportBox.getAt(0)!.isComplete;
 
     String transportSettingsText;
     Color transportSettingsColor;

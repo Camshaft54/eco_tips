@@ -47,7 +47,7 @@ class _CommuteFormState extends State<CommuteForm> {
   final _formKey = GlobalKey<FormState>();
   final gasMileageController = TextEditingController();
   final commuteDistanceController = TextEditingController();
-  final transportBox = Hive.box('transport');
+  final transportBox = Hive.box<TransportType>('transport');
   late final TransportType transport;
 
   _CommuteFormState() {
