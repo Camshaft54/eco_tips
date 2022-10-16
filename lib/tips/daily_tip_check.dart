@@ -59,9 +59,9 @@ class _DailyTipCheckState extends State<DailyTipCheck> {
 
   Widget buildTipCheck(Map<String, Tip> allTips, TipSelection tipSelection,
       List<List<bool>> tipCompletionSelections, index) {
-    var tip = allTips[index.toString()];
+    Tip tip = allTips[index.toString()]!;
     return Column(children: [
-      Text((tip != null) ? tip.name : ""),
+      Text("${tip.name} (${tip.difficulty} star${tip.difficulty > 1 ? "s" : ""})"),
       ToggleButtons(
           children: const [Text("Yes"), Text("No")],
           isSelected: tipCompletionSelections[index],

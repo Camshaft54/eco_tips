@@ -23,7 +23,6 @@ class TipSelection extends HiveObject {
   String toString() {
     return "Tips: ${tips.join(", ")} - $points pts";
   }
-
 }
 
 extension TipBoxFuncs on Box<TipSelection> {
@@ -38,16 +37,23 @@ extension TipBoxFuncs on Box<TipSelection> {
   String generateWeekKey() =>
       getWeekStartDate().millisecondsSinceEpoch.toString();
 
-  List<String> getKeysForMonth(DateTime lastDate) {
+  /// Given the date in the month, this function will return a map with the dates and keys
+  /// prior to and including it for that month.
+  Map<DateTime, String> getKeysForMonth(DateTime lastDate,
+      {nullKeyForMissingWeeks = false}) {
     const maxWeeks = 5;
     DateTime currDate = getWeekStartDate(specificDate: lastDate);
-    List<String> keys = [];
+    Map<DateTime, String> keys = {};
     // Loop for up to five weeks (max number of weeks in one month) until current month has changed
     // During each iteration, add a new key for the current week, then subtract 7 days from date
     for (int i = 0; i < maxWeeks; i++) {
       if (currDate.month != lastDate.month) break;
       var currWeekKey = getWeekKey(specificDate: currDate);
-      if (currWeekKey != null) keys.add(currWeekKey);
+      if (currWeekKey != null) {
+        keys[currDate] = currWeekKey;
+      } else if (nullKeyForMissingWeeks) {
+        keys[currDate] = "";
+      }
       currDate = currDate.subtract(const Duration(days: 7));
     }
     return keys;
