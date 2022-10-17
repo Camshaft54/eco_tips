@@ -34,6 +34,7 @@ class Main {
       return AppInstallDate().installDate;
     } catch (e, st) {
       debugPrint("$e $st");
+      // Arbitrary date
       return DateTime(2022, 10, 15);
     }
   }

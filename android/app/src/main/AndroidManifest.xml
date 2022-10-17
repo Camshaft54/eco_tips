@@ -4,8 +4,8 @@
     android:versionCode="1"
     android:versionName="v1.0.0">
     <application
-        android:label="carbon_tracker"
-        android:icon="@mipmap/ic_launcher">
+        android:label="EcoTips"
+        android:icon="@mipmap/eco_tips">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
