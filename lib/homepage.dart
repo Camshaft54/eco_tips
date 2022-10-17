@@ -1,6 +1,6 @@
-import 'package:carbon_tracker/settings/settings_page.dart';
-import 'package:carbon_tracker/tips_home.dart';
-import 'package:carbon_tracker/tracker_home.dart';
+import 'package:eco_tips/settings/settings_page.dart';
+import 'package:eco_tips/tips_home.dart';
+import 'package:eco_tips/tracker_home.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {

@@ -1,7 +1,7 @@
-import 'package:carbon_tracker/tips/daily_tip_check.dart';
-import 'package:carbon_tracker/tips/tip_loader.dart';
-import 'package:carbon_tracker/tips/tip_selection.dart';
-import 'package:carbon_tracker/tips/weekly_tip_selector.dart';
+import 'package:eco_tips/tips/daily_tip_check.dart';
+import 'package:eco_tips/tips/tip_loader.dart';
+import 'package:eco_tips/tips/tip_selection.dart';
+import 'package:eco_tips/tips/weekly_tip_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -177,7 +177,7 @@ class TipsStatusCard extends Card {
               const ListTile(
                 leading: Icon(Icons.bar_chart),
                 title: Text("Tips Activity"),
-                subtitle: Text("Track your progress over the past few weeks."),
+                subtitle: Text("Track your weekly stars over the past few months."),
               ),
               Padding(
                   padding:

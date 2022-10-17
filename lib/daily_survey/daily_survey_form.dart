@@ -1,6 +1,6 @@
-import 'package:carbon_tracker/daily_survey/daily_survey.dart';
-import 'package:carbon_tracker/daily_survey/daily_survey_food_types.dart';
-import 'package:carbon_tracker/settings/transport_type.dart';
+import 'package:eco_tips/daily_survey/daily_survey.dart';
+import 'package:eco_tips/daily_survey/daily_survey_food_types.dart';
+import 'package:eco_tips/settings/transport_type.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';

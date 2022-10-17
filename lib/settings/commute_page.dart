@@ -1,5 +1,5 @@
-import 'package:carbon_tracker/homepage.dart';
-import 'package:carbon_tracker/settings/transport_type.dart';
+import 'package:eco_tips/homepage.dart';
+import 'package:eco_tips/settings/transport_type.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 

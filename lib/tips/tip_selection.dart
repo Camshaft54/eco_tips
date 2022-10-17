@@ -1,4 +1,4 @@
-import 'package:carbon_tracker/daily_survey/daily_survey.dart';
+import 'package:eco_tips/daily_survey/daily_survey.dart';
 import 'package:hive/hive.dart';
 
 part 'tip_selection.g.dart';

@@ -1,4 +1,4 @@
-import 'package:carbon_tracker/settings/transport_type.dart';
+import 'package:eco_tips/settings/transport_type.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -107,46 +107,58 @@ class _TrackerHomeState extends State<TrackerHome> {
                         }),
                       ]),
                 ))),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: (currDate == Main.firstInstallDate)
-                  ? null
-                  : () {
-                      setState(() {
-                        dayCardDirection = AxisDirection.left;
-                        currDate = currDate.add(const Duration(days: -1));
-                      });
-                    }),
-          ElevatedButton(
-              child: Text(DateFormat.yMEd().format(currDate)),
-              onPressed: () async {
-                var newDate = await showDatePicker(
-                    context: context,
-                    initialDate: currDate,
-                    firstDate: Main.firstInstallDate,
-                    lastDate: getCurrentDate());
-                if (newDate != null) {
-                  setState(() {
-                    dayCardDirection = (newDate.isAfter(currDate))
-                        ? AxisDirection.right
-                        : AxisDirection.left;
-                    currDate = newDate;
-                  });
-                }
-              }),
-          IconButton(
-              icon: const Icon(Icons.arrow_forward),
-              onPressed: (currDate ==
-                      getCurrentDate()) // Disable button if the current day is today
-                  ? null
-                  : () {
-                      setState(() {
-                        dayCardDirection = AxisDirection.right;
-                        currDate = currDate.add(const Duration(days: 1));
-                      });
-                    }),
-        ])
+        FutureBuilder(
+            future: Main.firstInstallDate,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              DateTime firstInstallDate = snapshot.data as DateTime;
+              return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: (currDate == firstInstallDate)
+                            ? null
+                            : () {
+                                setState(() {
+                                  dayCardDirection = AxisDirection.left;
+                                  currDate =
+                                      currDate.add(const Duration(days: -1));
+                                });
+                              }),
+                    ElevatedButton(
+                        child: Text(DateFormat.yMEd().format(currDate)),
+                        onPressed: () async {
+                          var newDate = await showDatePicker(
+                              context: context,
+                              initialDate: currDate,
+                              firstDate: firstInstallDate,
+                              lastDate: getCurrentDate());
+                          if (newDate != null) {
+                            setState(() {
+                              dayCardDirection = (newDate.isAfter(currDate))
+                                  ? AxisDirection.right
+                                  : AxisDirection.left;
+                              currDate = newDate;
+                            });
+                          }
+                        }),
+                    IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed: (currDate ==
+                                getCurrentDate()) // Disable button if the current day is today
+                            ? null
+                            : () {
+                                setState(() {
+                                  dayCardDirection = AxisDirection.right;
+                                  currDate =
+                                      currDate.add(const Duration(days: 1));
+                                });
+                              }),
+                  ]);
+            })
       ]),
     );
   }

@@ -1,5 +1,5 @@
-import 'package:carbon_tracker/tips/tip_loader.dart';
-import 'package:carbon_tracker/tips/tip_selection.dart';
+import 'package:eco_tips/tips/tip_loader.dart';
+import 'package:eco_tips/tips/tip_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
