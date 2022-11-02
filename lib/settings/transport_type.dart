@@ -37,7 +37,7 @@ class TransportType {
   static final TransportType commuterRail =
       TransportType("commuter rail", "Commuter Rail", 0.15);
   static final TransportType carPool =
-      TransportType("car pool", "Car Pool", 0.01);
+      TransportType("car pool", "Carpool", 0.01);
   static final TransportType zeroEmission =
       TransportType("zero emission", "Walking/Biking", 0);
   static final TransportType none = TransportType("none", "No Commute", 0);
